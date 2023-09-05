@@ -14,6 +14,12 @@ router = APIRouter(
 
 @router.post('/',
              response_model=schemas.User,
+             responses={
+                 400: {
+                     'description': 'Пользователь с таким email или username уже существует',
+                     'model': schemas.ErrorMessage
+                     },
+                 },
              status_code=status.HTTP_201_CREATED)
 def create_users(user: schemas.UserCreate,
                  db: Session = Depends(get_db)):
@@ -21,19 +27,13 @@ def create_users(user: schemas.UserCreate,
         return database.create_user(db, user)
     except database.UserExists:
         raise HTTPException(
-        status_code=status.HTTP_401_UNAUTHORIZED,
-        detail="Пользователь с таким email или username уже существует",
+        status_code=status.HTTP_400_BAD_REQUEST,
+        detail='Пользователь с таким email или username уже существует',
     )
 
 
-@router.get("/me/", response_model=schemas.User)
-async def read_users_me(
+@router.get("/me", response_model=schemas.User)
+async def read_me(
     current_user: Annotated[schemas.User, Depends(oauth2.get_current_active_user)]
 ):
     return current_user
-
-@router.get("/me/items/")
-async def read_own_items(
-    current_user: Annotated[schemas.User, Depends(oauth2.get_current_active_user)]
-):
-    return [{"item_id": "Foo", "owner": current_user.username}]

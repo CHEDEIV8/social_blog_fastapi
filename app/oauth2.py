@@ -11,7 +11,7 @@ oauth2_scheme = OAuth2PasswordBearer(tokenUrl='api/v1/jwt/create/')
 
 SECRET_KEY = config.settings.secret
 ALGORITHM = "HS256"
-ACCESS_TOKEN_EXPIRE_MINUTES = 30
+ACCESS_TOKEN_EXPIRE_MINUTES = 60 * 24
 
 def create_access_token(data: dict):
     """Функция создает токен доступа"""
@@ -54,6 +54,6 @@ async def get_current_user(token: Annotated[str, Depends(oauth2_scheme)],
 async def get_current_active_user(
     current_user: Annotated[schemas.UserInDB, Depends(get_current_user)]
 ):
-    if current_user.is_active:
+    if not current_user.is_active:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Пользователь неактивен")
     return current_user

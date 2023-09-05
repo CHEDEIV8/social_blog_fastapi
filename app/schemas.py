@@ -25,3 +25,6 @@ class Token(BaseModel):
 
 class TokenData(BaseModel):
     username: str
+
+class ErrorMessage(BaseModel):
+    detail: str
