@@ -11,4 +11,4 @@ class Settings(BaseSettings):
     database_username: str
     secret: str
 
-settings = Settings()
+settings = Settings() # type: ignore

@@ -1,12 +1,21 @@
 from pydantic import BaseModel, EmailStr
 
-class User(BaseModel):
+
+class UserBase(BaseModel):
     username: str
     email: EmailStr
-    disabled: bool | None = None
+
+
+class User(UserBase):
+    is_active: bool
+
+
+class UserCreate(UserBase):
+    password: str
+
 
 class UserInDB(User):
-    hashed_password: str
+    password: str
 
 
 class Token(BaseModel):
@@ -15,4 +24,4 @@ class Token(BaseModel):
 
 
 class TokenData(BaseModel):
-    username: str | None = None
+    username: str

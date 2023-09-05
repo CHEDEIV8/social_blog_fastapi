@@ -6,7 +6,7 @@ def hash(password: str):
 
     return pwd_context.hash(password)
 
-def veryfy(password, hashed_password):
+def verify(password, hashed_password):
     """Функция проверки пароля при входе в систему"""
 
     return pwd_context.verify(password, hashed_password)
