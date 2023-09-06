@@ -18,7 +18,7 @@ def authenticate_user(db: Session, username: str, password: str):
 
 
 @router.post('/jwt/create', response_model=schemas.Tokens)
-async def login_for_access_token(
+async def login_for_jwt_token(
     # form_data: Annotated[OAuth2PasswordRequestForm, Depends()],
     token_data: schemas.TokenCreate,
     db: Session = Depends(get_db),
@@ -47,7 +47,7 @@ async def refresh_access_token(
 
 
 @router.post('/jwt/verify')
-async def refresh_verify_token(
+async def verify_token(
     token: schemas.Token,
 ):
     oauth2.verify_jwt_token(token.token)
