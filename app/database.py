@@ -1,8 +1,8 @@
 from sqlalchemy import create_engine, select
-
-from sqlalchemy.orm import sessionmaker, Session
+from sqlalchemy.orm import Session, sessionmaker
 
 from app.config import settings
+
 from . import models, schemas, utils
 
 # SQLALCHEMY_DTABASE_URL = 'postgresql://<username>:<password>@<ip: adress/hostname>/<data_base_name>'
@@ -11,6 +11,7 @@ SQLALCHEMY_DTABASE_URL = f'postgresql://{settings.database_username}:{settings.d
 engine = create_engine(SQLALCHEMY_DTABASE_URL)
 
 Sessionlocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+
 
 class UserExists(Exception):
     pass
@@ -26,12 +27,15 @@ def get_db():
 
 
 def get_user(db: Session, username: str):
-    return db.scalar(select(models.User).where(models.User.username == username))
+    return db.scalar(
+        select(models.User).where(models.User.username == username)
+    )
 
 
 def create_user(db: Session, user: schemas.UserCreate):
     stmt = select(models.User).where(
-        (models.User.username == user.username) | (models.User.email == user.email)
+        (models.User.username == user.username)
+        | (models.User.email == user.email)
     )
     if db.execute(stmt).first():
         raise UserExists

@@ -18,13 +18,29 @@ class UserInDB(User):
     password: str
 
 
+class RefreshTokens(BaseModel):
+    refresh: str
+
+
+class AccessTokens(BaseModel):
+    access: str
+
+
+class Tokens(RefreshTokens, AccessTokens):
+    pass
+
 class Token(BaseModel):
-    access_token: str
-    token_type: str
+    token: str
 
 
 class TokenData(BaseModel):
     username: str
+
+
+class TokenCreate(BaseModel):
+    username: str
+    password: str
+
 
 class ErrorMessage(BaseModel):
     detail: str
