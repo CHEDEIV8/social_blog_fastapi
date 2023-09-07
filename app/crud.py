@@ -14,6 +14,10 @@ class UserExists(Exception):
     pass
 
 
+class FollowExists(Exception):
+    pass
+
+
 def create_user(db: Session, user: schemas.UserCreate):
     stmt = select(models.User).where(
         (models.User.username == user.username)
@@ -37,3 +41,27 @@ def get_groups(db: Session):
 
 def get_group(db: Session, group_id):
     return db.scalar(select(models.Group).where(models.Group.id == group_id))
+
+
+def get_follows(db: Session, username: str):
+    return db.scalars(
+        select(models.Follow)
+        .join(models.User, models.Follow.user_id == models.User.id)
+        .where(models.User.username == username)
+    ).all()
+
+
+def create_follow(db: Session, following_id: int, user_id: int):
+    stmt = select(models.Follow).where(
+        (models.Follow.user_id == user_id),
+        (models.Follow.following_id == following_id),
+    )
+    if db.execute(stmt).first():
+        raise FollowExists
+    db_follow = models.Follow(user_id=user_id, following_id=following_id)
+
+    db.add(db_follow)
+    db.commit()
+    db.refresh(db_follow)
+
+    return db_follow

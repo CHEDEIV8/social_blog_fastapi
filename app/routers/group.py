@@ -1,9 +1,7 @@
-from typing import Annotated
-
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 
-from .. import crud, database, oauth2, schemas, utils
+from .. import crud, database, schemas, utils
 
 router = APIRouter(prefix='/groups', tags=['Group'])
 
@@ -17,5 +15,5 @@ def read_groups(db: Session = Depends(database.get_db)):
 def read_group(group_id: int, db: Session = Depends(database.get_db)):
     group = crud.get_group(db, group_id)
     if not group:
-        utils.raise_not_found('Группа не найдена')
+        raise utils.not_found('Группа не найдена')
     return group

@@ -16,6 +16,7 @@ SECRET_KEY = config.settings.secret
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 5
 REFRESH_TOKEN_EXPIRE_MINUTES = 60 * 24
+
 CREDENTIALS_EXCEPTION = HTTPException(
     status_code=status.HTTP_401_UNAUTHORIZED,
     detail='Could not validate credentials',
@@ -63,12 +64,11 @@ def verify_jwt_token(token: str, credentials_exception=CREDENTIALS_EXCEPTION):
 async def get_current_user(
     token: Annotated[str, Depends(oauth2_scheme)],
     db: Session = Depends(database.get_db),
-    credentials_exception=CREDENTIALS_EXCEPTION,
 ):
     token_data = verify_jwt_token(token)
     user = crud.get_user(db, username=token_data.username)
     if user is None:
-        raise credentials_exception
+        raise CREDENTIALS_EXCEPTION
     return user
 
 
