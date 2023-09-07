@@ -1,5 +1,4 @@
 from datetime import datetime, timedelta
-from functools import partial
 from typing import Annotated
 
 from fastapi import Depends, HTTPException, status
