@@ -59,5 +59,6 @@ class Follow(BaseModel):
     user: str
     following: str
 
+
 class FollowCreate(BaseModel):
     following: str

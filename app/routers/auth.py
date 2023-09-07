@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session
 
 from app.database import get_db
 
-from .. import oauth2, schemas, utils, crud
+from .. import crud, oauth2, schemas, utils
 
 router = APIRouter(
     tags=['Authentication'],

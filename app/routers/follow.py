@@ -1,15 +1,16 @@
 from typing import Annotated
 
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 
 from .. import crud, database, oauth2, schemas, utils
 
 router = APIRouter(prefix='/follow', tags=['Follow'])
 
-FOLLOW_NOT_FOUND  = {'following': ['Пользователь не найден']}
+FOLLOW_NOT_FOUND = {'following': ['Пользователь не найден']}
 CANT_FOLLOW_SELF = {'following': ['Нельзя подписаться на самого себя']}
 FOLLOW_ALREDY_EXIST = {'following': ['Подписка уже существует']}
+
 
 @router.get('/', response_model=list[schemas.Follow])
 def read_follows(

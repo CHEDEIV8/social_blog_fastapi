@@ -22,6 +22,6 @@ def not_found(message: str):
 
 def validation_error(message: dict):
     return HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail=message,
-        )
+        status_code=status.HTTP_400_BAD_REQUEST,
+        detail=message,
+    )

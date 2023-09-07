@@ -5,7 +5,7 @@ from sqlalchemy.orm import Session
 
 from app.database import get_db
 
-from .. import oauth2, schemas, crud
+from .. import crud, oauth2, schemas
 
 router = APIRouter(prefix='/users', tags=['Users'])
 
