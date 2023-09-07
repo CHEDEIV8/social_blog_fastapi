@@ -5,7 +5,7 @@ from sqlalchemy.orm import Session
 
 from app.database import get_db
 
-from .. import database, oauth2, schemas
+from .. import oauth2, schemas, crud
 
 router = APIRouter(prefix='/users', tags=['Users'])
 
@@ -23,8 +23,8 @@ router = APIRouter(prefix='/users', tags=['Users'])
 )
 def create_users(user: schemas.UserCreate, db: Session = Depends(get_db)):
     try:
-        return database.create_user(db, user)
-    except database.UserExists:
+        return crud.create_user(db, user)
+    except crud.UserExists:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail='Пользователь с таким email или username уже существует',

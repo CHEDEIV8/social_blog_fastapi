@@ -7,7 +7,8 @@ from fastapi.security import OAuth2PasswordBearer
 from jose import JWTError, jwt
 from sqlalchemy.orm import Session
 
-from . import config, database, schemas
+
+from . import config, database, schemas, crud
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl='api/v1/jwt/create')
 
@@ -65,7 +66,7 @@ async def get_current_user(
     credentials_exception=CREDENTIALS_EXCEPTION,
 ):
     token_data = verify_jwt_token(token)
-    user = database.get_user(db, username=token_data.username)
+    user = crud.get_user(db, username=token_data.username)
     if user is None:
         raise credentials_exception
     return user

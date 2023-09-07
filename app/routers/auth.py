@@ -1,15 +1,18 @@
 from fastapi import APIRouter, Depends, HTTPException, Response, status
 from sqlalchemy.orm import Session
 
-from app.database import get_db, get_user
+from app.database import get_db
 
-from .. import oauth2, schemas, utils
+from .. import oauth2, schemas, utils, crud
 
-router = APIRouter(tags=['Authentication'])
+router = APIRouter(
+    tags=['Authentication'],
+    prefix='/jwt',
+)
 
 
 def authenticate_user(db: Session, username: str, password: str):
-    user = get_user(db, username=username)
+    user = crud.get_user(db, username=username)
     if not user:
         return False
     if not utils.verify(password, user.password):
@@ -17,7 +20,7 @@ def authenticate_user(db: Session, username: str, password: str):
     return user
 
 
-@router.post('/jwt/create', response_model=schemas.Tokens)
+@router.post('/create', response_model=schemas.Tokens)
 async def login_for_jwt_token(
     # form_data: Annotated[OAuth2PasswordRequestForm, Depends()],
     token_data: schemas.TokenCreate,
@@ -36,7 +39,7 @@ async def login_for_jwt_token(
     return {'refresh': refresh_token, 'access': access_token}
 
 
-@router.post('/jwt/refresh', response_model=schemas.AccessTokens)
+@router.post('/refresh', response_model=schemas.AccessTokens)
 async def refresh_access_token(
     token: schemas.RefreshTokens,
 ):
@@ -46,7 +49,7 @@ async def refresh_access_token(
     return {'access': oauth2.create_access_token(data=data)}
 
 
-@router.post('/jwt/verify')
+@router.post('/verify')
 async def verify_token(
     token: schemas.Token,
 ):

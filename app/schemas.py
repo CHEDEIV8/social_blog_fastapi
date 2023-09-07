@@ -29,6 +29,7 @@ class AccessTokens(BaseModel):
 class Tokens(RefreshTokens, AccessTokens):
     pass
 
+
 class Token(BaseModel):
     token: str
 
@@ -44,3 +45,10 @@ class TokenCreate(BaseModel):
 
 class ErrorMessage(BaseModel):
     detail: str
+
+
+class Group(BaseModel):
+    id: int
+    title: str
+    slug: str
+    description: str
