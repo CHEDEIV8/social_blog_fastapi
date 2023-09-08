@@ -1,7 +1,7 @@
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
-from app import models, schemas, utils
+from . import models, schemas, utils
 
 
 def get_user(db: Session, username: str):
@@ -65,3 +65,27 @@ def create_follow(db: Session, following_id: int, user_id: int):
     db.refresh(db_follow)
 
     return db_follow
+
+
+def get_posts(db: Session):
+    return db.scalars(select(models.Post)).all()
+
+
+def get_post(db: Session, post_id):
+    return db.scalar(select(models.Post).where(models.Post.id == post_id))
+
+
+def create_post(
+    db: Session,
+    author_id: int,
+    text: str,
+    group_id: int | None,
+    image: str | None,
+):
+    db_post = models.Post(
+        author_id=author_id, text=text, group_id=group_id, image=image
+    )
+    db.add(db_post)
+    db.commit()
+    db.refresh(db_post)
+    return db_post

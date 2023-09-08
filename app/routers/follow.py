@@ -20,13 +20,16 @@ def read_follows(
     db: Session = Depends(database.get_db),
 ):
     follows = crud.get_follows(db, username=current_user.username)
-    return [
-        {
-            'user': follow.user.username,
-            'following': follow.following.username,
-        }
-        for follow in follows
-    ]
+    return follows
+
+
+# [
+#         {
+#             'user': follow.user.username,
+#             'following': follow.following.username,
+#         }
+#         for follow in follows
+#     ]
 
 
 @router.post('/', response_model=schemas.Follow)
@@ -34,24 +37,21 @@ def read_follow(
     current_user: Annotated[
         schemas.UserInDB, Depends(oauth2.get_current_active_user)
     ],
-    follow: schemas.FollowCreate,
+    data: schemas.FollowCreate,
     db: Session = Depends(database.get_db),
 ):
-    following = crud.get_user(db, username=follow.following)
-    if not following:
+    following_user = crud.get_user(db, username=data.following)
+    if not following_user:
         raise utils.validation_error(FOLLOW_NOT_FOUND)
-    if current_user == following:
+    if current_user == following_user:
         raise utils.validation_error(CANT_FOLLOW_SELF)
     try:
-        crud.create_follow(
+        follow = crud.create_follow(
             db,
             user_id=current_user.id,
-            following_id=following.id,
+            following_id=following_user.id,
         )
     except crud.FollowExists:
         raise utils.validation_error(FOLLOW_ALREDY_EXIST)
 
-    return {
-        'user': current_user.username,
-        'following': following.username,
-    }
+    return follow
