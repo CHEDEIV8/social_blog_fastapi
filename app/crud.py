@@ -89,3 +89,8 @@ def create_post(
     db.commit()
     db.refresh(db_post)
     return db_post
+
+
+def delete_post(db: Session, post: models.Post):
+    db.delete(post)
+    db.commit()

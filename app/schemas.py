@@ -81,3 +81,9 @@ class PostCreate(BaseModel):
     text: str
     image: str | None
     group: int | None
+
+
+class PostForPatch(PostCreate):
+    text: str | None = None
+    image: str | None = None
+    group: int | None = None
