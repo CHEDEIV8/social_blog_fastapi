@@ -1,4 +1,4 @@
-from sqlalchemy import select
+from sqlalchemy import select, update
 from sqlalchemy.orm import Session
 
 from . import models, schemas, utils
@@ -15,6 +15,10 @@ class UserExists(Exception):
 
 
 class FollowExists(Exception):
+    pass
+
+
+class GroupDoesNotExist(Exception):
     pass
 
 
@@ -74,21 +78,33 @@ def get_posts(db: Session):
 def get_post(db: Session, post_id):
     return db.scalar(select(models.Post).where(models.Post.id == post_id))
 
-
-def create_post(
-    db: Session,
-    author_id: int,
-    text: str,
-    group_id: int | None,
-    image: str | None,
-):
+def create_post(db: Session, author_id: int, data: schemas.PostCreate):
+    if data.group and not get_group(db, group_id=data.group):
+        raise GroupDoesNotExist
     db_post = models.Post(
-        author_id=author_id, text=text, group_id=group_id, image=image
+        **data.model_dump(exclude={'group'}),
+        group_id=data.group,
+        author_id=author_id,
     )
     db.add(db_post)
     db.commit()
     db.refresh(db_post)
     return db_post
+
+def update_post(db: Session, post: models.Post, data: schemas.PostUpdate):
+    if data.group and not get_group(db, group_id=data.group):
+        raise GroupDoesNotExist
+    update_data = data.model_dump(exclude_unset=True)
+    if 'group' in update_data:
+        update_data['group_id'] = update_data.pop('group')
+
+    for field, value in update_data.items():
+        setattr(post, field, value)
+
+    db.add(post)   
+    db.commit()
+    db.refresh(post)
+    return post
 
 
 def delete_post(db: Session, post: models.Post):

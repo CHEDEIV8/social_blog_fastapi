@@ -21,7 +21,7 @@ def read_posts(db: Session = Depends(database.get_db)):
 
 
 @router.get('/{post_id}', response_model=schemas.Post)
-def read_group(post: Annotated[models.Post, Depends(get_post)]):
+def read_post(post: Annotated[models.Post, Depends(get_post)]):
     return post
 
 
@@ -33,20 +33,31 @@ def create_post(
     data: schemas.PostCreate,
     db: Session = Depends(database.get_db),
 ):
-    if data.group:
-        group = crud.get_group(db, group_id=data.group)
-        if not group:
-            raise utils.not_found('Страница не найдена')
-    else:
-        group = None
+    try:
+        return crud.create_post(db, author_id=current_user.id, data=data)
+    except crud.GroupDoesNotExist:
+        raise utils.not_found('Страница не найдена')
 
-    return crud.create_post(
-        db,
-        author_id=current_user.id,
-        text=data.text,
-        image=data.image,
-        group_id=group.id if group else None,
-    )
+
+@router.patch(
+    '/{post_id}',
+    response_model=schemas.Post
+)
+def update_post(
+    post: Annotated[models.Post, Depends(get_post)],
+    data: schemas.PostUpdate,
+    current_user: Annotated[
+        schemas.UserInDB, Depends(oauth2.get_current_active_user)
+    ],
+    db: Session = Depends(database.get_db),
+):
+    if current_user != post.author:
+        raise utils.not_author_error('Нельзя изменить чужой контент')
+
+    try:
+        return crud.update_post(db, post=post, data=data)
+    except crud.GroupDoesNotExist:
+        raise utils.not_found('Страница не найдена')
 
 
 @router.delete('/{post_id}', status_code=status.HTTP_204_NO_CONTENT)

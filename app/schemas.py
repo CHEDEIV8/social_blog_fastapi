@@ -1,10 +1,13 @@
 from datetime import datetime
 
-from pydantic import AliasPath, BaseModel, EmailStr, Field, field_validator
+from pydantic import AliasPath, BaseModel, EmailStr, Field, field_validator, validator
+
+MIN_LENGTH_USERNAME = 3
+MAX_LENGTH_PASSWORD = 8
 
 
 class UserBase(BaseModel):
-    username: str
+    username: str = Field(min_length=MIN_LENGTH_USERNAME)
     email: EmailStr
 
 
@@ -13,12 +16,12 @@ class User(UserBase):
 
 
 class UserCreate(UserBase):
-    password: str
+    password: str = Field(max_length=MAX_LENGTH_PASSWORD)
 
 
 class UserInDB(User):
     id: int
-    password: str
+    password: str = Field(max_length=MAX_LENGTH_PASSWORD)
 
 
 class RefreshTokens(BaseModel):
@@ -79,11 +82,14 @@ class Post(BaseModel):
 
 class PostCreate(BaseModel):
     text: str
-    image: str | None
-    group: int | None
-
-
-class PostForPatch(PostCreate):
-    text: str | None = None
     image: str | None = None
     group: int | None = None
+
+
+class PostUpdate(PostCreate):
+    text: str | None = None
+    @validator('text')
+    def name_cannot_be_null(cls, value):
+        if value is None:
+            raise ValueError('поле text не может быть пустым.')
+        return value
