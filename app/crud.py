@@ -116,3 +116,47 @@ def update_post(
 def delete_post(db: Session, post: models.Post):
     db.delete(post)
     db.commit()
+
+
+def get_comment(db: Session, comment_id: int, post: models.Post):
+    return db.scalar(
+        select(models.Comment).where(
+            models.Comment.id == comment_id, models.Comment.post_id == post.id
+        )
+    )
+
+
+def get_comments(post: models.Post):
+    return post.comments
+
+
+def create_comment(
+    db: Session, data: schemas.CommentCreate, post: models.Post, author_id: int
+):
+    db_comment = models.Comment(
+        **data.model_dump(), post_id=post.id, author_id=author_id
+    )
+    db.add(db_comment)
+    db.commit()
+    db.refresh(db_comment)
+    return db_comment
+
+
+def delete_comment(db: Session, comment: models.Comment):
+    db.delete(comment)
+    db.commit()
+
+
+def update_comment(
+    db: Session,
+    comment: models.Comment,
+    data: schemas.PostUpdate | schemas.PostCreate,
+):
+    update_data = data.model_dump(exclude_unset=True)
+    for field, value in update_data.items():
+        setattr(comment, field, value)
+
+    db.add(comment)
+    db.commit()
+    db.refresh(comment)
+    return comment

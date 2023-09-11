@@ -2,7 +2,7 @@ from fastapi import FastAPI
 
 from app import models
 from app.database import engine
-from app.routers import auth, follow, group, post, user
+from app.routers import auth, follow, group, post, user, comment
 
 models.Base.metadata.create_all(bind=engine)
 
@@ -15,3 +15,4 @@ app.include_router(user.router, prefix=API_PREFIX)
 app.include_router(group.router, prefix=API_PREFIX)
 app.include_router(follow.router, prefix=API_PREFIX)
 app.include_router(post.router, prefix=API_PREFIX)
+app.include_router(comment.router, prefix=API_PREFIX)

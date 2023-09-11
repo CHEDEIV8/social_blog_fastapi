@@ -65,7 +65,6 @@ def update_post(
     ],
     db: Session = Depends(database.get_db),
 ):
-    print(request.method)
     if current_user != post.author:
         raise utils.not_author_error('Нельзя изменить чужой контент')
 

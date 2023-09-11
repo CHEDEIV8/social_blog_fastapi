@@ -93,3 +93,15 @@ class PostUpdate(PostCreate):
         if value is None:
             raise ValueError('поле text не может быть пустым.')
         return value
+
+
+class Comment(BaseModel):
+    id: int
+    author: str = Field(validation_alias=AliasPath('author', 'username'))
+    text: str
+    created: datetime
+    post: int = Field(validation_alias=AliasPath('post', 'id'))
+
+
+class CommentCreate(BaseModel):
+    text: str
