@@ -1,6 +1,6 @@
 from typing import Annotated
 
-from fastapi import APIRouter, Depends, HTTPException, Response, status
+from fastapi import APIRouter, Depends, Response, status
 from sqlalchemy.orm import Session
 
 from .. import crud, database, models, oauth2, schemas, utils
@@ -39,11 +39,8 @@ def create_post(
         raise utils.not_found('Страница не найдена')
 
 
-@router.patch(
-    '/{post_id}',
-    response_model=schemas.Post
-)
-def update_post(
+@router.patch('/{post_id}', response_model=schemas.Post)
+def partial_update_post(
     post: Annotated[models.Post, Depends(get_post)],
     data: schemas.PostUpdate,
     current_user: Annotated[
@@ -51,6 +48,24 @@ def update_post(
     ],
     db: Session = Depends(database.get_db),
 ):
+    if current_user != post.author:
+        raise utils.not_author_error('Нельзя изменить чужой контент')
+    try:
+        return crud.update_post(db, post=post, data=data)
+    except crud.GroupDoesNotExist:
+        raise utils.not_found('Страница не найдена')
+
+
+@router.put('/{post_id}', response_model=schemas.Post)
+def update_post(
+    post: Annotated[models.Post, Depends(get_post)],
+    data: schemas.PostCreate,
+    current_user: Annotated[
+        schemas.UserInDB, Depends(oauth2.get_current_active_user)
+    ],
+    db: Session = Depends(database.get_db),
+):
+    print(request.method)
     if current_user != post.author:
         raise utils.not_author_error('Нельзя изменить чужой контент')
 

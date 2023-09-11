@@ -78,6 +78,7 @@ def get_posts(db: Session):
 def get_post(db: Session, post_id):
     return db.scalar(select(models.Post).where(models.Post.id == post_id))
 
+
 def create_post(db: Session, author_id: int, data: schemas.PostCreate):
     if data.group and not get_group(db, group_id=data.group):
         raise GroupDoesNotExist
@@ -91,7 +92,12 @@ def create_post(db: Session, author_id: int, data: schemas.PostCreate):
     db.refresh(db_post)
     return db_post
 
-def update_post(db: Session, post: models.Post, data: schemas.PostUpdate):
+
+def update_post(
+    db: Session,
+    post: models.Post,
+    data: schemas.PostUpdate | schemas.PostCreate,
+):
     if data.group and not get_group(db, group_id=data.group):
         raise GroupDoesNotExist
     update_data = data.model_dump(exclude_unset=True)
@@ -101,7 +107,7 @@ def update_post(db: Session, post: models.Post, data: schemas.PostUpdate):
     for field, value in update_data.items():
         setattr(post, field, value)
 
-    db.add(post)   
+    db.add(post)
     db.commit()
     db.refresh(post)
     return post

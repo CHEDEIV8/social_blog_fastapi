@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from pydantic import AliasPath, BaseModel, EmailStr, Field, field_validator, validator
+from pydantic import AliasPath, BaseModel, EmailStr, Field, validator
 
 MIN_LENGTH_USERNAME = 3
 MAX_LENGTH_PASSWORD = 8
