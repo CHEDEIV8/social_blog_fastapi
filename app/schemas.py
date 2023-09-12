@@ -1,6 +1,7 @@
 from datetime import datetime
+from .utils import save_image
 
-from pydantic import AliasPath, BaseModel, EmailStr, Field, validator
+from pydantic import AliasPath, BaseModel, EmailStr, Field, field_validator
 
 MIN_LENGTH_USERNAME = 3
 MAX_LENGTH_PASSWORD = 8
@@ -79,17 +80,40 @@ class Post(BaseModel):
         default=None, validation_alias=AliasPath('group', 'id')
     )
 
+    @field_validator('image')
+    @classmethod
+    def relative_url_for_image(cls, value: str | None):
+        if value:
+            return '/media/' + value
+        return value
+
 
 class PostCreate(BaseModel):
     text: str
     image: str | None = None
     group: int | None = None
 
+    @field_validator('image')
+    @classmethod
+    def save_image(cls, value: str | None):
+        if not value:
+            return value
+        if not value.startswith('data:image'):
+            raise ValueError('Картинка должна начинаться с data:image')
+        try:
+            filename = save_image(value)
+        except Exception as e:
+            raise ValueError(f'Ошибка при сохранении файла {e}')
+        return filename
+        
+
 
 class PostUpdate(PostCreate):
     text: str | None = None
-    @validator('text')
-    def name_cannot_be_null(cls, value):
+
+    @field_validator('text')
+    @classmethod
+    def name_cannot_be_null(cls, value: str | None):
         if value is None:
             raise ValueError('поле text не может быть пустым.')
         return value

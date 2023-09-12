@@ -1,3 +1,4 @@
+from pathlib import Path
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -15,3 +16,5 @@ class Settings(BaseSettings):
 
 
 settings = Settings()  # type: ignore
+
+BASE_DIR = Path(__file__).parent

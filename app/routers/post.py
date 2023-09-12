@@ -1,7 +1,6 @@
 from typing import Annotated
 
 from fastapi import APIRouter, Depends, Response, status
-from fastapi_pagination.links import LimitOffsetPage
 from sqlalchemy.orm import Session
 
 from .. import crud, database, models, oauth2, schemas, utils
@@ -16,7 +15,7 @@ def get_post(post_id: int, db: Session = Depends(database.get_db)):
     return post
 
 
-@router.get("/", response_model=utils.Page[schemas.Post]) # type: ignore
+@router.get("/", response_model=utils.Page[schemas.Post])  # type: ignore
 def read_posts(db: Session = Depends(database.get_db)):
     return crud.get_posts(db)
 

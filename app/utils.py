@@ -1,6 +1,9 @@
-from fastapi import HTTPException, status, Query
-from passlib.context import CryptContext
+from fastapi import HTTPException, Query, status
 from fastapi_pagination.links import LimitOffsetPage
+from passlib.context import CryptContext
+import base64
+import uuid
+from .config import BASE_DIR
 
 pwd_context = CryptContext(schemes=['bcrypt'], deprecated='auto')
 
@@ -34,6 +37,15 @@ def not_author_error(message: str):
         detail=message,
     )
 
-Page = LimitOffsetPage.with_custom_options(
-    limit = Query(10, ge=1, le=500)
-)
+
+Page = LimitOffsetPage.with_custom_options(limit=Query(10, ge=1, le=500))
+
+def save_image(value):
+    img_format, img_str = value.split(';base64,')
+    ext = img_format.split('/')[-1]
+    filename = f'{uuid.uuid4()}.{ext}'
+    img_data = base64.b64decode(img_str)
+    with open(BASE_DIR / 'media' / filename, 'wb') as f:
+        f.write(img_data)
+        # raise ValueError(f'Ошибка при сохранении файла {e}')
+    return filename
