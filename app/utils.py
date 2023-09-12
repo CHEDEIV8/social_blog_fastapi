@@ -1,5 +1,6 @@
-from fastapi import HTTPException, status
+from fastapi import HTTPException, status, Query
 from passlib.context import CryptContext
+from fastapi_pagination.links import LimitOffsetPage
 
 pwd_context = CryptContext(schemes=['bcrypt'], deprecated='auto')
 
@@ -32,3 +33,7 @@ def not_author_error(message: str):
         status_code=status.HTTP_403_FORBIDDEN,
         detail=message,
     )
+
+Page = LimitOffsetPage.with_custom_options(
+    limit = Query(10, ge=1, le=500)
+)

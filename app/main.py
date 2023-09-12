@@ -3,10 +3,12 @@ from fastapi import FastAPI
 from app import models
 from app.database import engine
 from app.routers import auth, follow, group, post, user, comment
-
+from fastapi_pagination import add_pagination
 models.Base.metadata.create_all(bind=engine)
 
 app = FastAPI()
+add_pagination(app)
+
 
 API_PREFIX = '/api/v1'
 

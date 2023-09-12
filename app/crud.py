@@ -1,4 +1,5 @@
-from sqlalchemy import select, update
+from fastapi_pagination.ext.sqlalchemy import paginate
+from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from . import models, schemas, utils
@@ -72,7 +73,7 @@ def create_follow(db: Session, following_id: int, user_id: int):
 
 
 def get_posts(db: Session):
-    return db.scalars(select(models.Post)).all()
+    return paginate(db, select(models.Post))
 
 
 def get_post(db: Session, post_id):

@@ -7,7 +7,7 @@ from app.routers.post import get_post
 
 from .. import crud, database, models, oauth2, schemas, utils
 
-router = APIRouter(prefix='/posts/{post_id}/comments', tags=['Posts'])
+router = APIRouter(prefix='/posts/{post_id}/comments', tags=['Comments'])
 
 
 def get_comment(
