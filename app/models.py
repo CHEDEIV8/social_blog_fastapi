@@ -10,8 +10,6 @@ class Base(DeclarativeBase):
 
 
 class User(Base):
-    """Модель пользователей"""
-
     __tablename__ = 'user'
     id: Mapped[int] = mapped_column(primary_key=True)
     username: Mapped[str] = mapped_column(String(30), unique=True)
@@ -33,8 +31,6 @@ class User(Base):
 
 
 class Group(Base):
-    """Модель групп"""
-
     __tablename__ = 'group'
     id: Mapped[int] = mapped_column(primary_key=True)
     title: Mapped[str] = mapped_column(String(200))
@@ -51,8 +47,6 @@ class Group(Base):
 
 
 class Post(Base):
-    """Модель постов"""
-
     __tablename__ = 'post'
     id: Mapped[int] = mapped_column(primary_key=True)
     text: Mapped[str]

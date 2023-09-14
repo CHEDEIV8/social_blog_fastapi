@@ -17,14 +17,12 @@ REFRESH_TOKEN_EXPIRE_MINUTES = 60 * 24
 
 CREDENTIALS_EXCEPTION = HTTPException(
     status_code=status.HTTP_401_UNAUTHORIZED,
-    detail='Could not validate credentials',
+    detail='Не удалось подтвердить учетные данные',
     headers={'WWW-Authenticate': 'Bearer'},
 )
 
 
 def create_jwt_token(data: dict, expires_delta: timedelta):
-    """Функция создает токен доступа"""
-
     expire = datetime.utcnow() + expires_delta
     to_encode = data | {'exp': expire}
     encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)

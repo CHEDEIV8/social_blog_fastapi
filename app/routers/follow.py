@@ -23,15 +23,6 @@ def read_follows(
     return follows
 
 
-# [
-#         {
-#             'user': follow.user.username,
-#             'following': follow.following.username,
-#         }
-#         for follow in follows
-#     ]
-
-
 @router.post('/', response_model=schemas.Follow)
 def read_follow(
     current_user: Annotated[
