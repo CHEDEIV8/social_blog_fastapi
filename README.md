@@ -9,7 +9,9 @@ Python, FastApi, PostgreSql, SqlAlchemy, Pydantic, fastapi-pagination
 
 ### Описание:
 
-**social_blog_fastapi** - это API написанная на FastApi для social_blog(https://github.com/CHEDEIV8/social_blog). Позволяющая просматривать и создавать посты, просматривать группы, подписываться на авторов постов.
+**social_blog_fastapi** - это API написанная на FastApi для [social_blog](https://github.com/CHEDEIV8/social_blog). Позволяющая просматривать и создавать посты, просматривать группы, подписываться на авторов постов.
+
+Также см. альтернативную реализацию API на [Django Rest Framework.](https://github.com/CHEDEIV8/social_blog_api)
 
 ---
 
@@ -20,7 +22,6 @@ Python, FastApi, PostgreSql, SqlAlchemy, Pydantic, fastapi-pagination
 ```
 	git@github.com:CHEDEIV8/social_blog_fastapi.git
 ```
-
 2. Создать в папке app/ файл **.env** с переменными окружения (см. [.env.example](.env.example)).
 
 3. Cоздать и активировать виртуальное окружение::
@@ -46,9 +47,7 @@ Python, FastApi, PostgreSql, SqlAlchemy, Pydantic, fastapi-pagination
 ```
     uvicorn app.main:app
 ```
-
 ---
-
 ### Примеры запросов к API:
 
 1. Создать пользователя (POST):
